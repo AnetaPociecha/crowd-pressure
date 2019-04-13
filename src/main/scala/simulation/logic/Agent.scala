@@ -7,8 +7,8 @@ class Agent(var position: Vector2D,
             var goal: Vector2D = Vector2D(500,500),
             val agents: List[Agent]) {
 
-  val directionCalculator: DirectionCalculator
-    = new DirectionCalculator(this, agents)
+  val directionCalculator: VelocityCalculator
+    = new VelocityCalculator(this, agents)
 
   def getDistanceToGoal: Vector2D =  goal - position
 

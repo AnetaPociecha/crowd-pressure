@@ -4,7 +4,7 @@ import simulation.Vector2D
 import simulation.Config._
 import scala.util.Random._
 
-class DirectionCalculator(
+class VelocityCalculator(
                          agent: Agent,
                          agentsList: List[Agent]
                          ) {
@@ -18,22 +18,18 @@ class DirectionCalculator(
 
     for(n <- neighbours) {
       val collisionVector: Vector2D = getCollisionVector(n)
-      fixed += collisionVector * collisionVectorWeight
+      fixed += collisionVector * agent.speed
     }
 
     if(fixed.magnitude > agent.speed)
       fixed = fixed / fixed.magnitude * agent.speed
 
-    if(fixed.magnitude < 1) {
-      fixed = Vector2D(nextDouble(), nextDouble()) * (agent.speed / 5)
-      println("trouble")
-    }
-
     fixed
   }
 
   def getCollisionVector(neighbour: Agent): Vector2D = {
-    agent.position - neighbour.position
+    val diff = agent.position - neighbour.position
+    diff / diff.magnitude
   }
 
   def getDistanceFrom(neighbour: Agent): Double = {
