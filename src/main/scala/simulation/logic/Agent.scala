@@ -1,6 +1,7 @@
 package simulation.logic
 
 import simulation.Vector2D
+import simulation.Config._
 
 class Agent(var position: Vector2D,
             var speed: Double = 30,
@@ -13,8 +14,11 @@ class Agent(var position: Vector2D,
   def getDistanceToGoal: Vector2D =  goal - position
 
   def move (interval: Double): Unit = {
-    val desiredVelocity = getDesiredDirection * speed
-    val fixedVelocity = directionCalculator.getFixedVelocity(desiredVelocity)
+    val direction = getDesiredDirection
+    val center = privateSpaceCenter(direction)
+    val desiredVelocity = direction * speed
+
+    val fixedVelocity = directionCalculator.getFixedVelocity(desiredVelocity, center)
 
     val increase = fixedVelocity * interval
     position = position + increase
@@ -28,5 +32,9 @@ class Agent(var position: Vector2D,
 
   def isGoalReached: Boolean =
     getDistanceToGoal.magnitude < 30
+
+  def privateSpaceCenter(direction: Vector2D): Vector2D = {
+    position + direction * privateSpaceCenterShift
+  }
 
 }
