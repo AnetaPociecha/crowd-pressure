@@ -1,7 +1,7 @@
-package simulation.logic
+package simulation
 
-import simulation.Vector2D
 import simulation.Config._
+import simulation.socialforcemodel.VelocityCalculator
 
 class Agent(var position: Vector2D,
             var speed: Double = 30,

@@ -11,4 +11,5 @@ object Config {
   val collisionVectorWeight: Double = 1.2
   val density: Int = 5 // probability of new agent appearance per interval in %
   val fixMoveRepeat: Int = 4
+  val hexGridCellSize: Int = 10
 }

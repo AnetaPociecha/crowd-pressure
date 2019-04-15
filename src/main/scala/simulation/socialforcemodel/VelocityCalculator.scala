@@ -1,8 +1,7 @@
-package simulation.logic
+package simulation.socialforcemodel
 
-import simulation.Vector2D
+import simulation.{Agent, Vector2D}
 import simulation.Config._
-import scala.util.Random._
 
 class VelocityCalculator(
                          agent: Agent,

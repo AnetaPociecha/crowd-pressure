@@ -1,4 +1,4 @@
-package simulation.logic
+package simulation.socialforcemodel
 
 import scalafx.animation.AnimationTimer
 import scalafx.application

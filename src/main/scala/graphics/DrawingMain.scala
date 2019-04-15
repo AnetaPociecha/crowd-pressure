@@ -11,8 +11,10 @@ import scalafx.scene.layout._
 import scalafx.scene.paint.Color
 import scalafx.scene.image._
 import scalafx.scene.shape.Rectangle
-import java.io.{ File, FileInputStream }
+import java.io.{File, FileInputStream}
 import java.util.Properties
+
+import scalafx.scene.web.{WebEngine, WebView}
 
 object DrawingMain extends JFXApp {
 
@@ -25,28 +27,31 @@ object DrawingMain extends JFXApp {
       tabPane.setRotateGraphic(false)
       tabPane.setTabClosingPolicy(TabClosingPolicy.Unavailable)
 
-      val tab1 = new Tab
-      val lab1 = new Label("TAURON Arena")
-      tab1.setGraphic(lab1)
+      val arenaTab = new Tab
+      val arenaLabel = new Label("TAURON Arena")
+      arenaTab.setGraphic(arenaLabel)
 
-      val url = new File("C:/Users/user/Desktop/sp/arena.jpg").toURI().toString
-      val img = new Image(url, 600, 600, false, true)
+      val arenaView = new WebView()
+      val arenaEngine: WebEngine = arenaView.engine
+      arenaEngine.load("file:///C:/Users/user/Desktop/sp/arena.jpg")
 
-      val node = img.pixelReader match {
-        case None => new Label("Cannot read pixels")
-        case Some (pr) => new ImageView(img)
-      }
+      arenaTab.content = arenaView
 
-      tab1.content = node
 
-      val tab2 = new Tab
-      val lab2 = new Label("Kraków Główny")
-      tab2.setGraphic(lab2)
+      val stationTab = new Tab
+      val stationLabel = new Label("Kraków Główny")
+      stationTab.setGraphic(stationLabel)
+
+      val stationView = new WebView()
+      val stationEngine: WebEngine = stationView.engine
+      stationEngine.load("file:///C:/Users/user/Desktop/sp/dworzec.jpg")
+
+      stationTab.content = stationView
 
       tabPane.setTabMinHeight(150)
       tabPane.setTabMinWidth(30)
 
-      tabPane.tabs = List(tab1, tab2)
+      tabPane.tabs = List(arenaTab, stationTab)
       root = tabPane
     }
   }
