@@ -14,7 +14,9 @@ import scalafx.scene.shape.Rectangle
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
+import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.web.{WebEngine, WebView}
+import simulation.Config.{sceneHeight, sceneWidth}
 
 object DrawingMain extends JFXApp {
 
@@ -35,7 +37,16 @@ object DrawingMain extends JFXApp {
       val arenaEngine: WebEngine = arenaView.engine
       arenaEngine.load("file:///C:/Users/user/Desktop/sp/arena.jpg")
 
-      arenaTab.content = arenaView
+      val canvas = new Canvas(600,600)
+      val gc: GraphicsContext = canvas.graphicsContext2D
+
+      gc.fill = Color.MediumBlue
+      gc.fillRect(100, 100, 300, 300)
+
+      val stack = new StackPane
+      stack.children = List(arenaView, canvas)
+      arenaTab.content = stack
+
 
 
       val stationTab = new Tab

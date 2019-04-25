@@ -1,6 +1,8 @@
-package simulation
+package scenemodel
 
-class SceneModel {
+trait SceneModel {
+  val walls: Set[Wall]
+
   def isObstacle(x: Int, y: Int): Boolean = {
     false
   }
