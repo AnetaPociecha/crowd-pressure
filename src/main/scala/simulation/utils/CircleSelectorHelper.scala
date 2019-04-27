@@ -1,4 +1,4 @@
-package socialforcemodel.utils
+package simulation.utils
 
 case class CircleSelectorHelper(center: Vector2D, sectorStart: Vector2D, sectorEnd: Vector2D, radius: Double) {
 

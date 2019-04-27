@@ -1,4 +1,4 @@
-package socialforcemodel.app
+package simulation.app
 
 import scalafx.animation.AnimationTimer
 import scalafx.application
@@ -8,23 +8,24 @@ import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.paint.Color
 import scenemodel.SceneModel
-import socialforcemodel.Config.agentSize
-import socialforcemodel.agents.AgentsManager
-import socialforcemodel.path.SimplePathStrategy
-import socialforcemodel.Config._
+import simulation.Config.agentSize
+import simulation.agents.AgentsManager
+import simulation.Config._
 import scenemodel.SceneModelCreator
 
 object  App extends JFXApp {
 
-  val manager: AgentsManager = new AgentsManager(new SimplePathStrategy)
+  val manager: AgentsManager = new AgentsManager
   manager.init()
 
-  stage = new application.JFXApp.PrimaryStage() {
-    title = "Social force model"
+  for(_ <- 0 until 10) manager.step(0.5)
 
-    scene = new Scene(800,600) {
+  stage = new application.JFXApp.PrimaryStage() {
+    title = "Tuptusie"
+
+    scene = new Scene(canvasWidth, canvasHeight) {
       val border = new BorderPane
-      val canvas = new Canvas(800,600)
+      val canvas = new Canvas(canvasWidth,canvasHeight)
       val gc: GraphicsContext = canvas.graphicsContext2D
 
       border.center = canvas
@@ -41,7 +42,7 @@ object  App extends JFXApp {
         }
 
         lastTime = time
-        Thread sleep 200 // fix
+        Thread sleep 200
       }
 
       timer.start()
@@ -53,7 +54,7 @@ object  App extends JFXApp {
 
   def render(gc: GraphicsContext): Unit = {
     gc.fill = Color.White
-    gc.fillRect(0, 0, 800, 600)
+    gc.fillRect(0, 0, canvasWidth, canvasHeight)
     gc.fill = Color.Gray
 
     sceneModel.walls.foreach(w => {

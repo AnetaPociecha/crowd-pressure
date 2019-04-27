@@ -1,13 +1,14 @@
-package socialforcemodel.agents
+package simulation.agents
 
-import socialforcemodel.utils.Vector2D
-import socialforcemodel.Config._
+import simulation.shortestpath.DesiredDirCalc
+import simulation.utils.Vector2D
+import simulation.Config._
 
 import scala.collection.mutable.ArrayBuffer
 
 class Agent(
              @volatile var position: Vector2D,
-             val goal: Vector2D,
+             val desiredDirCalc: DesiredDirCalc,
              val desiredSpeed: Double,
              val agents: ArrayBuffer[Agent],
              val weight: Double = 70,
@@ -17,7 +18,10 @@ class Agent(
   val velocityCalc = VelocityCalc(this)
 
   def isGoalReached: Boolean = {
-    (position - goal).magnitude < 20
+    val tol = 5
+    ((position - desiredDirCalc.goal).magnitude < 5 ||
+    position.x < 0 || position.y < 0 || position.x > canvasWidth + tol ||
+    position.y > canvasHeight + tol)
   }
 
   def step(interval: Double): Unit = {

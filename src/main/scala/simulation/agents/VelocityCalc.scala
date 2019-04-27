@@ -1,9 +1,9 @@
-package socialforcemodel.agents
+package simulation.agents
 
-import socialforcemodel.Config.{agentRadius, personalSpaceRadius, selfStopAngle}
+import simulation.Config.{agentRadius, personalSpaceRadius, selfStopAngle}
 import scenemodel.{Edge, SceneModel, SceneModelCreator}
-import socialforcemodel.utils.{CircleSelectorHelper, PointWallDirCalc, Vector2D}
-import socialforcemodel.Config._
+import simulation.utils.{CircleSelectorHelper, PointWallDirCalc, Vector2D}
+import simulation.Config._
 
 case class VelocityCalc(agent: Agent) {
 
@@ -33,14 +33,14 @@ case class VelocityCalc(agent: Agent) {
     var edges: Set[Edge] = Set()
     sceneModel.walls.foreach(w => edges ++= w.edges)
 
-    val calcHelper = PointWallDirCalc(agent.position)
+    val wallDirCalc = PointWallDirCalc(agent.position)
     edges
       .filter(w => {
-        val dir = calcHelper.direction(w.start, w.stop)
+        val dir = wallDirCalc.direction(w.start, w.stop)
         dir.isDefined && dir.get.magnitude < wallForceRadius
       })
       .foreach(w => {
-        val dir = calcHelper.direction(w.start, w.stop).get
+        val dir = wallDirCalc.direction(w.start, w.stop).get
         val dist = dir.magnitude
         val d = (agentRadius + 2) - dist
 
@@ -56,8 +56,10 @@ case class VelocityCalc(agent: Agent) {
   }
 
   def desired(interval: Double): Vector2D = {
-    val diff = agent.goal - agent.position
-    val dir = diff / diff.magnitude
+    //val diff = agent.goal - agent.position
+    //val dir = diff / diff.magnitude
+
+    val dir = agent.desiredDirCalc.desiredDirection(agent.position)
 
     val velocity = dir * agent.weight * (agent.desiredSpeed - agent.speed) / interval
 
@@ -71,8 +73,8 @@ case class VelocityCalc(agent: Agent) {
 
     var fixed = velocity
 
-    val A = 2000
-    val B = 1
+    val A = 2000 //2000
+    val B = 0.8 // 0.8
     val k = 120000
 
     agent.agents.filter(a => a != agent && inPersonalSpace(a, velocity)).foreach(a => {
@@ -86,7 +88,7 @@ case class VelocityCalc(agent: Agent) {
       val f_ijn1 =  A * Math.exp(d / B)
       val f_ijn2 = if(d > 0) k * d else 0
 
-      val force =  dir * (f_ijn1 + f_ijn2)
+      val force =  dir * (f_ijn1 + f_ijn2) * 2
 
       fixed += force
     })
@@ -99,7 +101,7 @@ case class VelocityCalc(agent: Agent) {
     val leftArm = rotate(velocity, selfStopAngle)
 
     val circle: CircleSelectorHelper = CircleSelectorHelper(
-      agent.position, rightArm, leftArm, personalSpaceRadius * 0.6)
+      agent.position, rightArm, leftArm, circleSelectorRadius)
 
     agent.agents
       .filter(a => a != agent && inPersonalSpace(a, velocity))

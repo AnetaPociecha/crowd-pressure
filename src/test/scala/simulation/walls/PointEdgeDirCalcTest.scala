@@ -1,7 +1,7 @@
-package socialforcemodel.walls
+package simulation.walls
 
 import org.scalatest.FunSuite
-import socialforcemodel.utils.{PointWallDirCalc, Vector2D}
+import simulation.utils.{PointWallDirCalc, Vector2D}
 
 class PointEdgeDirCalcTest extends FunSuite {
 

@@ -1,4 +1,4 @@
-package socialforcemodel.utils
+package simulation.utils
 
 case class Vector2D(x: Double, y: Double) {
   def +(v: Vector2D) = Vector2D(x+v.x, y+v.y)

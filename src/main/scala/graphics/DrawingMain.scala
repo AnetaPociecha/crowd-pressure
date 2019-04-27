@@ -16,7 +16,6 @@ import java.util.Properties
 
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.web.{WebEngine, WebView}
-import simulation.Config.{sceneHeight, sceneWidth}
 
 object DrawingMain extends JFXApp {
 

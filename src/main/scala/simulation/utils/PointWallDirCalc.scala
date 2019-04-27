@@ -1,4 +1,4 @@
-package socialforcemodel.utils
+package simulation.utils
 
 case class PointWallDirCalc(p: Vector2D) {
 
