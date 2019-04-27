@@ -43,7 +43,8 @@ case class Dijkstra(graph: Array[Array[Boolean]]) {
 
       neighbours ++= nonVisitedNeighbours(n)
     }
-    ret.filter(e => e._2 != inf)
+    //ret.filter(e => e._2 != inf)
+    ret
   }
 
   def cost(cur: (Int,Int), costs: mutable.Map[(Int, Int), Int]): Int = {
