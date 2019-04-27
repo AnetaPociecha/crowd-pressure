@@ -13,7 +13,7 @@ import simulation.agents.AgentsManager
 import simulation.Config._
 import scenemodel.SceneModelCreator
 
-object  App extends JFXApp {
+object App extends JFXApp {
 
   val manager: AgentsManager = new AgentsManager
   manager.init()

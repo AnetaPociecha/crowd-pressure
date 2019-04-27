@@ -16,7 +16,6 @@ case class DesiredDirCalc(goal: Vector2D, cellSize: Int = hexGridCellSize) {
     nav.desiredDirections((rowCol.col.toInt,rowCol.row.toInt))
   }
 
-
   def desiredDirection(position: Vector2D): Vector2D = {
     val rowCol = grid.convertXYToRowCol(position.x, position.y)
     desiredDirectionMap((rowCol.col.toInt, rowCol.row.toInt))
