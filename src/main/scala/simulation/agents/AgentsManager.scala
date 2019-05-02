@@ -2,23 +2,23 @@ package simulation.agents
 
 import scenemodel.{SceneModel, SceneModelCreator}
 import simulation.shortestpath.DesiredDirCalc
-
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random._
 import simulation.Config._
-import simulation.utils.Vector2D
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{Duration, SECONDS }
+import scala.concurrent.{Await, Future, blocking}
 
 class AgentsManager() {
 
   val scene: SceneModel = SceneModelCreator.create()
-
-  val desiredDirCalcs: Array[DesiredDirCalc]
-    = scene.destinations.map(g => DesiredDirCalc(g))
+  var desiredDirCalcs: Array[DesiredDirCalc] = Array[DesiredDirCalc]()
 
   @volatile var agents: ArrayBuffer[Agent] = ArrayBuffer[Agent]()
 
-
   def init(): Unit = {
+    desiredDirCalcs = scene.destinations.map(g => DesiredDirCalc(g))
+
     for (_ <- 0 until initAgentsNumber) {
       agents += randomAgent()
     }
@@ -26,8 +26,9 @@ class AgentsManager() {
 
   def step(interval: Double): Unit = {
     for(_ <- 0 until fixMoveRepeat) {
-      agents.foreach(a => a.step(interval/fixMoveRepeat))
-      //agents = agents.reverse
+      agents.foreach(a => Await.ready(Future {
+        blocking(a.step(interval/fixMoveRepeat).run())
+      }, Duration(1, SECONDS)))
     }
     clear()
     add()
@@ -41,8 +42,8 @@ class AgentsManager() {
   def randomAgent(): Agent = {
     new Agent(
       scene.start,
-      goal,
-      speed,
+      desiredDirCalcs(nextInt(desiredDirCalcs.length)),
+      minAgentSpeed + nextInt(agentSpeedRange),
       agents
     )
   }
@@ -51,13 +52,4 @@ class AgentsManager() {
     if(nextInt(100) < density)
     agents += randomAgent()
   }
-
-  def speed: Double = {
-    minAgentSpeed + nextInt(agentSpeedRange)
-  }
-
-  def goal: DesiredDirCalc = {
-    desiredDirCalcs(nextInt(desiredDirCalcs.length))
-  }
-
 }

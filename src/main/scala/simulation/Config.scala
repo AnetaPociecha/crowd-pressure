@@ -6,8 +6,8 @@ object Config {
  val agentSize: Double = agentRadius * 2
  val personalSpaceRadius: Double = agentRadius * 10
  val interactionForceWeight: Double = 2.5
- val personalSpaceCenterShift: Double = personalSpaceRadius * 0.5
- val fixMoveRepeat: Int = 10
+ val personalSpaceCenterShift: Double = personalSpaceRadius * 0.7
+ val fixMoveRepeat: Int = 12
  val selfStopAngle: Double = 35
  val wallForceRadius: Double = personalSpaceRadius * 0.3
  val circleSelectorRadius: Double = personalSpaceRadius * 0.3

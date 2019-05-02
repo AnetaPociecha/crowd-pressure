@@ -1,7 +1,7 @@
 package simulation.shortestpath
 
 import scenemodel.{SceneModel, SceneModelCreator}
-import simulation.shortestpath.hexgrid.{HexGrid, Neighborhood, HexRowCol}
+import simulation.shortestpath.hexgrid.{HexGrid, HexRowCol, Neighborhood}
 import simulation.utils.Vector2D
 import simulation.Config._
 
@@ -41,21 +41,23 @@ case class Navigation(cellSize: Int) {
 
     val dirMap: mutable.Map[(Int, Int), Vector2D] = mutable.Map[(Int, Int), Vector2D]()
     val neighbourhood = Neighborhood(graph)
+    val cellDirection: CellDirection = CellDirection(costsMap, neighbourhood)
 
-    for (cell <- costsMap) {
+    costsMap.foreach(cell => dirMap(cell._1) = cellDirection.direction(cell))
+
+    dirMap
+  }
+
+  case class CellDirection(costsMap: mutable.Map[(Int, Int), Int], neighbourhood: Neighborhood) {
+    def direction(cell: ((Int, Int), Int)): Vector2D =  {
       val neighbours = neighbourhood.neighbours(cell._1).filter(n => costsMap.contains(n))
-
       var minN = neighbours(0)
       for (n <- neighbours) {
         if(costsMap(n) < costsMap(minN)) minN = n
       }
-
       val cur = Vector2D(cell._1._1, cell._1._2)
       val next = Vector2D(minN._1, minN._2)
-
-      dirMap(cell._1) = (next - cur) / (next - cur).magnitude
+      (next - cur) / (next - cur).magnitude
     }
-    dirMap
   }
-
 }

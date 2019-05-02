@@ -1,5 +1,6 @@
 package simulation.app
 
+import javafx.event.EventHandler
 import scalafx.animation.AnimationTimer
 import scalafx.application
 import scalafx.application.JFXApp
@@ -7,6 +8,7 @@ import scalafx.scene.Scene
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.paint.Color
+import scalafx.stage.WindowEvent
 import scenemodel.SceneModel
 import simulation.Config.agentSize
 import simulation.agents.AgentsManager
@@ -17,8 +19,6 @@ object App extends JFXApp {
 
   val manager: AgentsManager = new AgentsManager
   manager.init()
-
-  for(_ <- 0 until 10) manager.step(0.5)
 
   stage = new application.JFXApp.PrimaryStage() {
     title = "Tuptusie"

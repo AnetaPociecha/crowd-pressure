@@ -10,7 +10,7 @@ case class VelocityCalc(agent: Agent) {
   def velocity(interval: Double): Vector2D = {
     val des = desired(interval)
     var fixed = avoidAgentsCollision(des)
-    fixed = avoidWallCollision(fixed)
+    //fixed = avoidWallCollision(fixed)
 
     if(fixed.magnitude > agent.desiredSpeed)
       fixed = fixed / fixed.magnitude * agent.desiredSpeed
@@ -88,7 +88,7 @@ case class VelocityCalc(agent: Agent) {
       val f_ijn1 =  A * Math.exp(d / B)
       val f_ijn2 = if(d > 0) k * d else 0
 
-      val force =  dir * (f_ijn1 + f_ijn2) * 2
+      val force =  dir * (f_ijn1 + f_ijn2) //* 2
 
       fixed += force
     })

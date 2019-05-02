@@ -23,7 +23,7 @@ case class Dijkstra(graph: Array[Array[Boolean]]) {
 
   def costsMap(dest: (Int, Int)): mutable.Map[(Int, Int), Int] = {
 
-    val ret: mutable.Map[(Int, Int), Int] = {
+    val costMap: mutable.Map[(Int, Int), Int] = {
       var map: mutable.Map[(Int, Int), Int] = mutable.Map()
       for(i <- 0 until width; j <- 0 until height) {
         map += ((i,j) -> inf)
@@ -32,19 +32,19 @@ case class Dijkstra(graph: Array[Array[Boolean]]) {
     }
 
     val neighbours: mutable.Queue[(Int, Int)] = mutable.Queue()
-    ret(dest) = 0
+    costMap(dest) = 0
     visited(dest) = true
     neighbours ++= nonVisitedNeighbours(dest)
 
     while(neighbours.nonEmpty) {
       val n = neighbours.dequeue()
-      ret(n) = cost(n, ret)
+      costMap(n) = cost(n, costMap)
       visited(n) = true
 
       neighbours ++= nonVisitedNeighbours(n)
     }
-    //ret.filter(e => e._2 != inf)
-    ret
+    //costMap.filter(e => e._2 != inf || cost(e._1, costMap) < inf)
+    costMap
   }
 
   def cost(cur: (Int,Int), costs: mutable.Map[(Int, Int), Int]): Int = {
@@ -54,7 +54,7 @@ case class Dijkstra(graph: Array[Array[Boolean]]) {
 
   def nonVisitedNeighbours(cur: (Int,Int)): mutable.Queue[(Int,Int)] = {
     var ret: mutable.Queue[(Int,Int)] = mutable.Queue()
-    neighbourhood.rangeNeighbours(cur).filter(n => !visited(n)).foreach(n => ret += n)
+    neighbourhood.rangeNonObstacleNeighbours(cur).filter(n => !visited(n)).foreach(n => ret += n)
     ret
   }
 }

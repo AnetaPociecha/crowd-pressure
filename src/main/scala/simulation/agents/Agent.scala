@@ -24,7 +24,7 @@ class Agent(
     position.y > canvasHeight + tol)
   }
 
-  def step(interval: Double): Unit = {
+  def step(interval: Double): Runnable = { () ⇒
     val shift: Vector2D = velocityCalc.velocity(interval) * interval
     val newPosition = position + shift
     position = newPosition
