@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SVG Illustrator Test</title> 
+    </head>
+    <body>
+
+        <object data="./map.svg" type="image/svg+xml"
+                id="map" width="100%" height="100%"></object>
+
+        <script>
+			function test() {
+				app.callJavascript("Callback")
+			}
+            var map = document.getElementById("map");
+            map.addEventListener("load",function(){
+				
+			map.contentDocument.addEventListener("click",
+				(event) => {
+					var objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
+					console.log(objectName)
+					app.callJavascript(objectName)
+				} ,false);
+            }, false);
+			
+        </script>
+    </body>
+</html>
