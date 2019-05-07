@@ -11,6 +11,7 @@ import scalafx.scene.Scene
 import scalafx.scene.control._
 import scalafx.scene.layout._
 import scalafx.scene.web._
+import scalafx.stage.FileChooser
 
 object SVGBrowser extends JFXApp {
 
@@ -20,11 +21,17 @@ object SVGBrowser extends JFXApp {
   webEngine.load(getClass.getResource("map.html").toString)
 
   val button = new Button()
-  button.setText("Trigger JS callback")
+  button.setText("Load map")
   button.setOnAction(new EventHandler[ActionEvent] {
     override def handle(event: ActionEvent): Unit = {
       if (webEngine != null) {
-        webEngine.executeScript("test()")
+        val fileChooser = new FileChooser()
+        fileChooser.setTitle("Load map file")
+        val file = fileChooser.showOpenDialog(stage)
+        if (file != null) {
+          webEngine.executeScript("setupMap(\""+file.getAbsolutePath()+"\")")
+          webEngine.executeScript("setOnLoadCallback(function() { app.handleLayers(getLayers().join(\"|\")) })")
+        }
       }
     }
   })
