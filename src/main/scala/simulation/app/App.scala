@@ -42,7 +42,7 @@ object App extends JFXApp {
         }
 
         lastTime = time
-        Thread sleep 20
+        Thread sleep 200
       }
 
       timer.start()

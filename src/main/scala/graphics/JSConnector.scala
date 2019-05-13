@@ -14,12 +14,12 @@ class JSConnector {
     val listBuffer = new ListBuffer[String]()
     val tokenizer: StringTokenizer = new StringTokenizer(msg, "|");
 
-    while(tokenizer.hasMoreTokens()){
-      listBuffer += tokenizer.nextToken();
+    while(tokenizer.hasMoreTokens){
+      listBuffer += tokenizer.nextToken()
     }
 
     val list = listBuffer.toList
-    return list
+    list
   }
 
   def handleLayers(layers: String): Unit = {
