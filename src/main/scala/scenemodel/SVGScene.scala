@@ -1,0 +1,5 @@
+package scenemodel
+
+class SVGScene {
+
+}
