@@ -28,16 +28,6 @@ function onClick(event) {
     app.pushString(objectName)
 }
 
-function readLayer(x,y) {
-    map = document.getElementById("map");
-    if(map != null) {
-        objectName = map && map.contentDocument.elementFromPoint(x,y).parentNode.id
-        return objectName
-    } else {
-        return ""
-    }
-}
-
 function setupListener() {
     map = document.getElementById("map");
     map.addEventListener("load", onLoad, false);
