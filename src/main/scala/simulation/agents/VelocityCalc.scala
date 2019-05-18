@@ -28,7 +28,7 @@ case class VelocityCalc(agent: Agent) {
     val B = 1
     val k = 120000
 
-    val sceneModel: SceneModel = SceneModelCreator.create()
+    val sceneModel: SceneModel = SceneModelCreator.instance()
 
     var edges: Set[Edge] = Set()
     sceneModel.walls.foreach(w => edges ++= w.edges)
@@ -56,12 +56,9 @@ case class VelocityCalc(agent: Agent) {
   }
 
   def desired(interval: Double): Vector2D = {
-    //val diff = agent.goal - agent.position
-    //val dir = diff / diff.magnitude
-
     val dir = agent.desiredDirCalc.desiredDirection(agent.position)
 
-    val velocity = dir * agent.weight * (agent.desiredSpeed - agent.speed) / interval
+    val velocity = dir * agent.weight * (agent.desiredSpeed - agent.speed) / interval * 2
 
     if(isFontCollisionDanger(velocity))
       Vector2D(0,0)
@@ -88,7 +85,7 @@ case class VelocityCalc(agent: Agent) {
       val f_ijn1 =  A * Math.exp(d / B)
       val f_ijn2 = if(d > 0) k * d else 0
 
-      val force =  dir * (f_ijn1 + f_ijn2) //* 2
+      val force =  dir * (f_ijn1 + f_ijn2) * 3
 
       fixed += force
     })

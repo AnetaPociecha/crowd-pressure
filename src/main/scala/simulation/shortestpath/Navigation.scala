@@ -9,7 +9,7 @@ import scala.collection.mutable
 
 case class Navigation(cellSize: Int) {
 
-  val scene: SceneModel = SceneModelCreator.create()
+  val scene: SceneModel = SceneModelCreator.instance()
   val grid: HexGrid = HexGrid(cellSize)
 
   def createGraph(): Array[Array[Boolean]] = {
@@ -20,11 +20,22 @@ case class Navigation(cellSize: Int) {
     val graph: Array[Array[Boolean]] = Array.fill(Y)(Array.fill(X)(true))
 
     for(i <- 0 until X; j <- 0 until Y) {
-      val coords = grid.convertRowColToHexXY(HexRowCol(j,i))
-      val obs = scene.isObstacle(coords.x.toInt, coords.y.toInt)
-      if(obs) graph(j)(i) = false
+      if(isObstacle(i,j)) graph(j)(i) = false
     }
     graph
+  }
+
+  def isObstacle(i: Int, j: Int): Boolean = {
+    val coords = grid.convertRowColToHexXY(HexRowCol(j,i))
+    val shift = 0.5 * hexGridCellSize
+    val obs = (
+      scene.isObstacle(coords.x.toInt, coords.y.toInt)
+      || scene.isObstacle((coords.x - shift).toInt, (coords.y.toInt - shift).toInt)
+      || scene.isObstacle((coords.x - shift).toInt, (coords.y.toInt + shift).toInt)
+      || scene.isObstacle((coords.x + shift).toInt, (coords.y.toInt - shift).toInt)
+      || scene.isObstacle((coords.x + shift).toInt, (coords.y.toInt + shift).toInt)
+      )
+    obs
   }
 
   def desiredDirections(goal: (Int, Int)): mutable.Map[(Int, Int), Vector2D] = {

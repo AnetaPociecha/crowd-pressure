@@ -1,5 +1,6 @@
 package simulation.agents
 
+import scalafx.scene.paint.Color
 import simulation.shortestpath.DesiredDirCalc
 import simulation.utils.Vector2D
 import simulation.Config._
@@ -11,6 +12,7 @@ class Agent(
              val desiredDirCalc: DesiredDirCalc,
              val desiredSpeed: Double,
              val agents: ArrayBuffer[Agent],
+             val color: Color = Color.MediumBlue,
              val weight: Double = 70,
              @volatile var speed: Double = 0
            ) {

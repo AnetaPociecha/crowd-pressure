@@ -1,18 +1,23 @@
 package simulation.agents
 
+import scalafx.scene.paint.Color._
+import scalafx.scene.paint.Color
 import scenemodel.{SceneModel, SceneModelCreator}
 import simulation.shortestpath.DesiredDirCalc
+
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random._
 import simulation.Config._
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{Duration, SECONDS }
+import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{Await, Future, blocking}
 
 class AgentsManager() {
 
-  val scene: SceneModel = SceneModelCreator.create()
+  val scene: SceneModel = SceneModelCreator.instance()
   var desiredDirCalcs: Array[DesiredDirCalc] = Array[DesiredDirCalc]()
+  val colors: Array[Color] = Array(Crimson, LawnGreen, RoyalBlue, Red, GreenYellow)
 
   @volatile var agents: ArrayBuffer[Agent] = ArrayBuffer[Agent]()
 
@@ -40,11 +45,13 @@ class AgentsManager() {
   }
 
   def randomAgent(): Agent = {
+    val rand: Int = nextInt(desiredDirCalcs.length)
     new Agent(
       scene.start,
-      desiredDirCalcs(nextInt(desiredDirCalcs.length)),
+      desiredDirCalcs(rand),
       minAgentSpeed + nextInt(agentSpeedRange),
-      agents
+      agents,
+      colors(rand)
     )
   }
 

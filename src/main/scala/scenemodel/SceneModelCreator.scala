@@ -1,7 +1,8 @@
 package scenemodel
 
 object SceneModelCreator {
-  def create(): SceneModel = {
-    SimpleSceneModel()
+  val sceneModel: SceneModel = MySceneModel()
+  def instance(): SceneModel = {
+    sceneModel
   }
 }
