@@ -1,4 +1,4 @@
-package simulation.shortestpath.hexgrid
+package simulation.hexgrid
 
 
 case class HexRowCol(var row: Long = 0L, var col: Long = 0L) {
