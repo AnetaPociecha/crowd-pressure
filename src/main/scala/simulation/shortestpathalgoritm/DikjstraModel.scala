@@ -1,4 +1,4 @@
-package simulation
+package simulation.shortestpathalgoritm
 
 import simulation.hexgrid.Neighborhood
 
@@ -27,7 +27,7 @@ case class DikjstraModel(mapModel: MapModel, x: Long, y: Long) {
   private val neighborhood = Neighborhood()
 
   def createGraph(): mutable.Map[(Long, Long), Long] = {
-
+println("Dijkstra graph")
     val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
     var curNodes: List[(Long, Long)] = List((rowCol.row, rowCol.col))
     var nextNodes: List[(Long, Long)] = List()

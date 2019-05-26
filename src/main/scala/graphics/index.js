@@ -22,11 +22,11 @@ function onLoad() {
 }
 
 function onClick(event) {
-    map = document.getElementById("map");
-    objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
-    console.log(objectName)
-    app.pushString(objectName)
-}
+     map = document.getElementById("map");
+     objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
+     console.log(objectName)
+     app.pushString(objectName)
+ }
 
 function setupListener() {
     map = document.getElementById("map");
@@ -70,3 +70,13 @@ function clearMap() {
         document.body.removeChild(maps[i])
     }
 }
+
+function readLayer(x,y) {
+     map = document.getElementById("map");
+     element = map.contentDocument.elementFromPoint(x,y)
+     objectName = element && element.parentNode.id
+     if(objectName == null)
+        return "Null"
+     else
+        return objectName
+ }

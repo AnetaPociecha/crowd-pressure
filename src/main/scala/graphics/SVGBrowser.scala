@@ -1,5 +1,7 @@
 package graphics
 
+import java.io.File
+
 import javafx.beans.value.ChangeListener
 import javafx.concurrent.Worker
 import javafx.event.{ActionEvent, EventHandler}
@@ -12,11 +14,13 @@ import scalafx.scene.control._
 import scalafx.scene.layout._
 import scalafx.scene.web._
 import scalafx.stage.FileChooser
+import simulation.Simulation
 
 object SVGBrowser extends JFXApp {
 
   val webView = new WebView()
-  val webEngine = webView.getEngine()
+  val webEngine: WebEngine = webView.getEngine()
+  val simulation: Simulation = Simulation(webEngine)
 
   webEngine.load(getClass.getResource("map.html").toString)
 
@@ -27,9 +31,10 @@ object SVGBrowser extends JFXApp {
       if (webEngine != null) {
         val fileChooser = new FileChooser()
         fileChooser.setTitle("Load map file")
-        val file = fileChooser.showOpenDialog(stage)
+        val file: File = fileChooser.showOpenDialog(stage)
         if (file != null) {
-          webEngine.executeScript("setupMap(\""+file.getAbsolutePath()+"\")")
+          val uri: String = file.toURI.toString
+          webEngine.executeScript("setupMap(\""+uri+"\")")
           webEngine.executeScript("setOnLoadCallback(function() { app.handleLayers(getLayers().join(\"|\")) })")
         }
       }
@@ -49,7 +54,18 @@ object SVGBrowser extends JFXApp {
   val box: VBox = new VBox()
 
   box.getChildren.add(webView)
+
+  //
+
+  val button2 = new Button()
+  button2.setText("Init simulation")
+  button2.setOnAction(() => {
+    simulation.init()
+  })
+  //
+
   box.getChildren.add(button)
+  box.getChildren.add(button2) //
 
   root.getChildren().add(box)
 

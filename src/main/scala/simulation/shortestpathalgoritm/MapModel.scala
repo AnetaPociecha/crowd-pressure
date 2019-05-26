@@ -1,16 +1,17 @@
-package simulation
+package simulation.shortestpathalgoritm
 
+import simulation.Config.cellSize
 import simulation.hexgrid.{HexGrid, HexXY}
 
 import scala.collection.mutable
-import simulation.Config._
 
-case class MapModel(map: Map = Map(), margin: Int = 0, cellSize: Int = cellSize) {
+case class MapModel(map: simulation.Map, margin: Int = 0, cellSize: Int = cellSize) {
 
   val graph: mutable.Map[(Long, Long), Boolean] =  mutable.Map()
   val hexGrid: HexGrid = HexGrid(cellSize)
 
   def initGraph(): Unit = {
+    println("init map model")
     val startingRowCol = hexGrid.convertXYToRowCol(-margin, -margin)
     var row: Long = startingRowCol.row
     var col: Long = startingRowCol.col
