@@ -1,6 +1,5 @@
 package simulation
 
 object Config {
- val cellSize: Int = 60
-
+ val cellSize: Int = 20
 }

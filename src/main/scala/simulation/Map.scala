@@ -10,6 +10,4 @@ case class Map(webEngine: WebEngine, width: Int = 800, height: Int = 600) {
     layer != "Allowed"
   }
 
-  val destinations: Array[(Int, Int)] = Array((300,300), (350, 300))
-
 }

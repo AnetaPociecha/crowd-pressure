@@ -12,6 +12,7 @@ case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
 
   def init(): Unit = {
     println("init navigation field")
+
     val dijkstra = DikjstraModel(mapModel, x, y)
     val dg = dijkstra.createGraph()
 
@@ -19,6 +20,8 @@ case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
     val graph: mutable.Map[(Long, Long), Vector2D] = direction.createGraph()
     println(graph)
     directions = graph
+
+    println("init navigation field completed")
   }
 
   def direction(x: Long, y: Long): Vector2D = {

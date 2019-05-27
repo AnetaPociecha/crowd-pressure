@@ -25,7 +25,7 @@ function onClick(event) {
      map = document.getElementById("map");
      objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
      console.log(objectName)
-     app.pushString(objectName)
+     app.pushString([objectName,event.clientX,event.clientY].join(" "))
  }
 
 function setupListener() {
@@ -79,4 +79,9 @@ function readLayer(x,y) {
         return "Null"
      else
         return objectName
- }
+}
+
+function readMap(x,y) {
+    map = document.getElementById("map")
+    return map
+}

@@ -18,7 +18,7 @@ import simulation.Simulation
 
 object SVGBrowser extends JFXApp {
 
-  val webView = new WebView()
+  val webView: WebView = new WebView()
   val webEngine: WebEngine = webView.getEngine()
   val simulation: Simulation = Simulation(webEngine)
 
@@ -57,33 +57,69 @@ object SVGBrowser extends JFXApp {
 
   //
 
+  val button1 = new Button()
+  button1.setText("Adjust map size")
+  button1.setOnAction(() => {
+    simulation.adjustSize()
+  })
+
   val button2 = new Button()
-  button2.setText("Init simulation")
+  button2.setText("Init map model")
   button2.setOnAction(() => {
-    simulation.init()
+    simulation.initMapModel()
+  })
+
+  val button3 = new Button()
+  button3.setText("Submit destinations")
+  button3.setOnAction(() => {
+    simulation.submitDestinations()
+  })
+
+  val button4 = new Button()
+  button4.setText("Init navigation fields")
+  button4.setOnAction(() => {
+    simulation.initNavigationFields()
   })
   //
 
   box.getChildren.add(button)
+  box.getChildren.add(button1) //
   box.getChildren.add(button2) //
+  box.getChildren.add(button3) //
+  box.getChildren.add(button4) //
 
-  root.getChildren().add(box)
+  root.getChildren.add(box)
 
   val rootScene = new Scene(root, 800, 600)
 
   stage = new PrimaryStage {
     title = "SVG Browser"
-    width = 800
-    height = 600
     scene = rootScene
 
     webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener[Worker.State]() {
       def changed(observable: _root_.javafx.beans.value.ObservableValue[_ <: _root_.javafx.concurrent.Worker.State], oldValue: _root_.javafx.concurrent.Worker.State, newValue: _root_.javafx.concurrent.Worker.State): Unit = {
         if (newValue == Worker.State.SUCCEEDED) {
-          val window: JSObject = webEngine.executeScript("window").asInstanceOf[JSObject]
-          window.setMember("app", new JSConnector())
+          addJSConnectorToJSWindow()
         }
       }
     })
+  }
+
+  def setSize(width: Int, height: Int): Unit = {
+
+    println("set window size")
+    webView.setPrefSize(width,height)
+    val root2: StackPane = new StackPane()
+    root2.getChildren.add(box)
+
+    val sc = new Scene(root2)
+    stage.scene = sc
+
+    addJSConnectorToJSWindow()
+  }
+
+  def addJSConnectorToJSWindow(): Unit = {
+    val window: JSObject = webEngine.executeScript("window").asInstanceOf[JSObject]
+    window.setMember("app", new JSConnector())
   }
 }
