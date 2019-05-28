@@ -4,17 +4,18 @@ import java.util.StringTokenizer
 
 import scala.collection.mutable.ListBuffer
 import SVGBrowser.simulation
-import _root_.simulation.Simulation
 
 class JSConnector {
 
   def pushString(msg: String): Unit = {
     System.out.println("JS>> " + msg)
+
     val arr: Array[String] = msg.split(" ")
     val x: Int = arr(1).toInt
     val y: Int = arr(2).toInt
-    simulation.tmpDestinations += ((x,y))
-    println("destinations: " + simulation.tmpDestinations)
+
+    simulation.addDestination(x,y)
+
     SVGBrowser.addJSConnectorToJSWindow()
   }
 
@@ -36,5 +37,7 @@ class JSConnector {
     println("==== WARSTWY ====")
     list.foreach(println)
     println("=================")
+
+    SVGBrowser.onLoadAction()
   }
 }

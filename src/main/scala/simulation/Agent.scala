@@ -1,14 +1,16 @@
 package simulation
 
 import simulation.shortestpathalgoritm.NavigationField
-import simulation.Config.cellSize
+import config.Config.{cellSize, speed}
 
-class Agent(@volatile var position: Vector2D, val navigationField: NavigationField) {
+class Agent(
+             @volatile var position: Vector2D,
+             val navigationField: NavigationField,
+           ) {
 
   def step(): Unit = {
     val dir: Vector2D = navigationField.direction(position.x.toLong, position.y.toLong)
-    // to do stuff
-    position += (dir * 2)
+    position += (dir * speed)
   }
 
   def destinationReached(): Boolean = {

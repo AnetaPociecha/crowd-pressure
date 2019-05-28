@@ -4,7 +4,7 @@ import simulation.Vector2D
 import simulation.hexgrid.HexGrid
 
 import scala.collection.mutable
-import simulation.Config.cellSize
+import config.Config.cellSize
 
 case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
 

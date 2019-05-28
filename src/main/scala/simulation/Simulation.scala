@@ -7,9 +7,9 @@ import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.paint.Color
 import scalafx.scene.web.WebEngine
 import simulation.shortestpathalgoritm.{MapModel, NavigationField}
-
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
+import config.Config.agentRadius
 
 case class Simulation(webEngine: WebEngine) {
 
@@ -54,6 +54,13 @@ case class Simulation(webEngine: WebEngine) {
     println("init map completed")
   }
 
+  def addDestination(x: Int, y: Int): Unit = {
+    val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
+    if(!mapModel.isObstacle(rowCol.row, rowCol.col))
+      tmpDestinations += ((x,y))
+    println("destinations: " + tmpDestinations)
+  }
+
   def submitDestinations(): Unit = {
     mapModel.destinations ++= tmpDestinations
     tmpDestinations.clear()
@@ -84,36 +91,46 @@ case class Simulation(webEngine: WebEngine) {
       agents += new Agent(Vector2D(start._1,start._2),nav)
   }
 
+  var timer: AnimationTimer = _
+
   def perform(canvas: Canvas): Unit = {
 
-    val gc: GraphicsContext = canvas.graphicsContext2D
+    if(timer == null) {
+      val gc: GraphicsContext = canvas.graphicsContext2D
 
-    initAgent()
+      initAgent()
 
-    gc.fill = Color.Red
+      gc.fill = Color.Red
 
-    var lastTime = 0L
-    val timer = AnimationTimer { time =>
+      var lastTime = 0L
 
-      if(Random.nextInt(15) < 100) initAgent()
+      timer = AnimationTimer { time =>
 
-      gc.clearRect(0,0,storedWidth,storedHeight)
+        if(Random.nextInt(10) < 100) initAgent()
 
-      if(lastTime != 0) {
-        val interval = (time - lastTime) / 1e9
+        gc.clearRect(0,0,storedWidth,storedHeight)
 
-        agents.foreach(a => {
-          gc.fillOval(a.position.x.toInt, a.position.y.toInt, 7, 7)
-          a.step()
-        })
+        if(lastTime != 0) {
+          //        val interval = (time - lastTime) / 1e9
 
-        agents = agents.filter(a => !a.destinationReached())
+          agents.foreach(a => {
+            gc.fillOval(a.position.x.toInt, a.position.y.toInt, agentRadius*2, agentRadius*2)
+            a.step()
+          })
+
+          agents = agents.filter(a => !a.destinationReached())
+        }
+        lastTime = time
+        Thread sleep 100
       }
-      lastTime = time
-      Thread sleep 200
+      canvas.requestFocus()
     }
-    canvas.requestFocus()
+
     timer.start()
+  }
+
+  def stop(): Unit = {
+    if(timer != null) timer.stop()
   }
 
 }

@@ -1,6 +1,6 @@
 package simulation.shortestpathalgoritm
 
-import simulation.Config.cellSize
+import config.Config.cellSize
 import simulation.hexgrid.{HexGrid, HexXY}
 
 import scala.collection.mutable
@@ -40,7 +40,7 @@ case class MapModel(map: simulation.Map, margin: Int = 0, cellSize: Int = cellSi
     xy.y >= margin && xy.y < map.height - margin
   }
 
-  private  def isObstacle(row: Long, col: Long): Boolean = {
+  def isObstacle(row: Long, col: Long): Boolean = {
     val xy = hexGrid.convertRowColToHexXY(row, col)
 //    val shift = cellSize / 4
 //    (
