@@ -31,12 +31,13 @@ case class DikjstraModel(mapModel: MapModel, x: Long, y: Long) {
     println("Dijkstra graph")
 
     val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
-    var curNodes: List[(Long, Long)] = List((rowCol.row, rowCol.col))
-    var nextNodes: List[(Long, Long)] = List()
-    var cost = 0
+    @volatile var curNodes: List[(Long, Long)] = List((rowCol.row, rowCol.col))
+    @volatile var nextNodes: List[(Long, Long)] = List()
+    @volatile var cost = 0
 
     while( visited.values.exists(_ == false) && curNodes.nonEmpty) {
       println("process nodes: "+curNodes)
+
       for(node <- curNodes) {
         visit(node, cost)
         nextNodes ++= neighbours(node._1, node._2)

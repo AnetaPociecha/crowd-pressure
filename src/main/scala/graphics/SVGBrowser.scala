@@ -10,8 +10,10 @@ import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
+import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.control._
 import scalafx.scene.layout._
+import scalafx.scene.paint.Color
 import scalafx.scene.web._
 import scalafx.stage.FileChooser
 import simulation.Simulation
@@ -20,7 +22,7 @@ object SVGBrowser extends JFXApp {
 
   val webView: WebView = new WebView()
   val webEngine: WebEngine = webView.getEngine()
-  val simulation: Simulation = Simulation(webEngine)
+  var simulation: Simulation = Simulation(webEngine)
 
   webEngine.load(getClass.getResource("map.html").toString)
 
@@ -41,44 +43,47 @@ object SVGBrowser extends JFXApp {
     }
   })
 
-  val scene = new Scene(webView)
+  var root: BorderPane = new BorderPane()
+  val stack: StackPane = new StackPane()
 
-  val txfUrl = new TextField {
-    text = webEngine.location.value
-    hgrow = Priority.Always
-    vgrow = Priority.Never
-  }
-  txfUrl.onAction = handle {webEngine.load(txfUrl.text.get)}
-
-  val root: StackPane = new StackPane()
   val box: VBox = new VBox()
 
-  box.getChildren.add(webView)
-
+  stack.getChildren.add(webView)
+  root.center = stack
   //
 
   val button1 = new Button()
   button1.setText("Adjust map size")
   button1.setOnAction(() => {
     simulation.adjustSize()
+    addJSConnectorToJSWindow()
   })
 
   val button2 = new Button()
   button2.setText("Init map model")
   button2.setOnAction(() => {
     simulation.initMapModel()
+    addJSConnectorToJSWindow()
   })
 
   val button3 = new Button()
   button3.setText("Submit destinations")
   button3.setOnAction(() => {
     simulation.submitDestinations()
+    addJSConnectorToJSWindow()
   })
 
   val button4 = new Button()
   button4.setText("Init navigation fields")
   button4.setOnAction(() => {
     simulation.initNavigationFields()
+    addJSConnectorToJSWindow()
+  })
+
+  val button5 = new Button()
+  button5.setText("Start")
+  button5.setOnAction(() => {
+    start()
   })
   //
 
@@ -87,8 +92,9 @@ object SVGBrowser extends JFXApp {
   box.getChildren.add(button2) //
   box.getChildren.add(button3) //
   box.getChildren.add(button4) //
+  box.getChildren.add(button5) //
 
-  root.getChildren.add(box)
+  root.bottom = box
 
   val rootScene = new Scene(root, 800, 600)
 
@@ -108,11 +114,15 @@ object SVGBrowser extends JFXApp {
   def setSize(width: Int, height: Int): Unit = {
 
     println("set window size")
-    webView.setPrefSize(width,height)
-    val root2: StackPane = new StackPane()
-    root2.getChildren.add(box)
 
-    val sc = new Scene(root2)
+    webView.setMinSize(width,height)
+    webView.setMaxSize(width,height)
+
+    root = new BorderPane()
+    root.bottom = box
+    root.center = stack
+
+    val sc = new Scene(root)
     stage.scene = sc
 
     addJSConnectorToJSWindow()
@@ -122,4 +132,17 @@ object SVGBrowser extends JFXApp {
     val window: JSObject = webEngine.executeScript("window").asInstanceOf[JSObject]
     window.setMember("app", new JSConnector())
   }
+
+
+
+  /* ************************************************************ */
+
+  def start(): Unit = {
+    val canvas: Canvas = new Canvas(simulation.storedWidth, simulation.storedHeight)
+
+    stack.getChildren.add(canvas)
+
+    simulation.perform(canvas)
+  }
+
 }

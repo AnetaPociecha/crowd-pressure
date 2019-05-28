@@ -4,6 +4,7 @@ import java.util.StringTokenizer
 
 import scala.collection.mutable.ListBuffer
 import SVGBrowser.simulation
+import _root_.simulation.Simulation
 
 class JSConnector {
 
@@ -14,6 +15,7 @@ class JSConnector {
     val y: Int = arr(2).toInt
     simulation.tmpDestinations += ((x,y))
     println("destinations: " + simulation.tmpDestinations)
+    SVGBrowser.addJSConnectorToJSWindow()
   }
 
   def getArray(msg: String): List[String] = {
@@ -21,14 +23,15 @@ class JSConnector {
     val tokenizer: StringTokenizer = new StringTokenizer(msg, "|");
 
     while(tokenizer.hasMoreTokens()){
-      listBuffer += tokenizer.nextToken();
+      listBuffer += tokenizer.nextToken()
     }
 
     val list = listBuffer.toList
-    return list
+    list
   }
 
   def handleLayers(layers: String): Unit = {
+
     val list = getArray(layers)
     println("==== WARSTWY ====")
     list.foreach(println)
