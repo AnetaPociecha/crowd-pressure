@@ -71,9 +71,6 @@ function layers() {
         layers.push(getLayerChildren((map.children[i])))
     }
     return JSON.stringify(layers)
-
-    // return "DUPA"//getLayerChildren(map).toString()
-    // app.printLayers(getLayerChildren(map).toString())
 }
 
 function getLayerChildren(layer) {
