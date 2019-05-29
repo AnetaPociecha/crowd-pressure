@@ -41,8 +41,8 @@ object SVGBrowser extends JFXApp {
         if (file != null) {
           val uri: String = file.toURI.toString
           webEngine.executeScript("clearMap()")
-          webEngine.executeScript("setupMap(\""+uri+"\")")
-          webEngine.executeScript("setOnLoadCallback(function() { app.handleLayers(getLayers().join(\"|\")) })")
+          webEngine.executeScript("setupMap(\""+uri+"\")") // app.printLayers(layers())
+          webEngine.executeScript("setOnLoadCallback(function() {  app.printLayers(layers()) })") // app.handleLayers(getLayers().join("|"));
           openLayerChooser()
         }
       }
@@ -58,6 +58,7 @@ object SVGBrowser extends JFXApp {
   def onLoadAction(): Unit = {
     simulation.adjustSize()
     simulation.initMapModel()
+    print("ON Load action")
     addJSConnectorToJSWindow()
   }
 

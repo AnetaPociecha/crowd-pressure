@@ -106,7 +106,7 @@ case class Simulation(webEngine: WebEngine) {
 
       timer = AnimationTimer { time =>
 
-        if(Random.nextInt(10) < 100) initAgent()
+        if(Random.nextInt(3) < 100) initAgent()
 
         gc.clearRect(0,0,storedWidth,storedHeight)
 
@@ -121,7 +121,7 @@ case class Simulation(webEngine: WebEngine) {
           agents = agents.filter(a => !a.destinationReached())
         }
         lastTime = time
-        Thread sleep 100
+        Thread sleep 40
       }
       canvas.requestFocus()
     }

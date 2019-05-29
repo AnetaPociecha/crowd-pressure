@@ -60,7 +60,31 @@ function getLayers() {
             }
         }
     }
+
     return layers
+}
+
+function layers() {
+    map = document.getElementById("map").contentDocument
+    layers = []
+    for (var i=0; i<map.children.length; i++) {
+        layers.push(getLayerChildren((map.children[i])))
+    }
+    return JSON.stringify(layers)
+
+    // return "DUPA"//getLayerChildren(map).toString()
+    // app.printLayers(getLayerChildren(map).toString())
+}
+
+function getLayerChildren(layer) {
+    var layerInfo = { name: layer.id, children: [] }
+    for (var i=0; i<layer.children.length; i++) {
+        if (layer.children[i].id != "") {
+            layerInfo.children.push(getLayerChildren((layer.children[i])))
+        }
+
+    }
+    return layerInfo
 }
 
 function clearMap() {

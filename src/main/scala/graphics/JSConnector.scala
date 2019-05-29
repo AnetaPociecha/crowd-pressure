@@ -2,8 +2,14 @@ package graphics
 
 import java.util.StringTokenizer
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import SVGBrowser.simulation
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+
+import scala.collection.immutable.Map.Map2
+import scala.collection.mutable
 
 class JSConnector {
 
@@ -40,4 +46,23 @@ class JSConnector {
 
     SVGBrowser.onLoadAction()
   }
+
+
+  def printLayers(layers: String) : Unit = {
+    println("====== LAYERS ======")
+    println(layers)
+    println("====================")
+
+    val mapper = new ObjectMapper() with ScalaObjectMapper
+    mapper.registerModule(DefaultScalaModule)
+
+    var mapData = mapper.readValue(layers, classOf[List[LayerNode]])
+
+    for (i <- mapData.indices) {
+//      println(mapData(i).getName())
+    }
+
+    SVGBrowser.onLoadAction()
+    SVGBrowser.addJSConnectorToJSWindow()
+    }
 }
