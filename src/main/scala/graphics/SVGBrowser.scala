@@ -10,13 +10,13 @@ import netscape.javascript.JSObject
 import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
-import scalafx.geometry.Insets
+import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.control._
 import scalafx.scene.layout._
 import scalafx.scene.web._
-import scalafx.stage.FileChooser
+import scalafx.stage.{FileChooser, Modality, Stage}
 import simulation.Simulation
 
 object SVGBrowser extends JFXApp {
@@ -42,7 +42,8 @@ object SVGBrowser extends JFXApp {
           val uri: String = file.toURI.toString
           webEngine.executeScript("clearMap()")
           webEngine.executeScript("setupMap(\""+uri+"\")")
-          webEngine.executeScript("setOnLoadCallback(function() { app.handleLayers(getLayers().join(\"|\")) })")
+          webEngine.executeScript("setOnLoadCallback(function() {  app.handleLayers(getLayers().join(\"|\")) })") // app.printLayers(layers())
+          openLayerChooser()
         }
       }
     }
@@ -59,6 +60,7 @@ object SVGBrowser extends JFXApp {
 
     simulation.adjustSize()
     simulation.initMapModel()
+    print("ON Load action")
     addJSConnectorToJSWindow()
     destinationsButton.disable = false
     startButton.disable = true
@@ -96,6 +98,66 @@ object SVGBrowser extends JFXApp {
   destinationsButton.setPrefHeight(25)
   startButton.setPrefWidth(120)
   startButton.setPrefHeight(25)
+
+  def openLayerChooser() = {
+    val newStage = new Stage()
+    val comp = new VBox() {
+      spacing = 10
+      padding = Insets(30, 30, 30, 30)
+      alignment = Pos.TopCenter
+    }
+
+    val stageScene = new Scene(comp)
+    newStage.setAlwaysOnTop(true);
+    newStage.initModality(Modality.WINDOW_MODAL)
+    newStage.initOwner(rootScene.getWindow())
+    newStage.setScene(stageScene)
+    comp.getChildren().add(createDropdownLine("Allowed space"))
+    comp.getChildren().add(createDropdownLine("Obstacles"))
+    comp.getChildren().add(createDropdownLine("Targets"))
+
+    val submitButton = new Button("Submit") {
+      margin = Insets(20, 0, 0, 0)
+    }
+    submitButton.setMinWidth(200)
+    submitButton.onAction = new EventHandler[ActionEvent] {
+      override def handle(event: ActionEvent) {
+        newStage.close()
+      }
+    }
+
+    comp.getChildren().add(submitButton)
+    newStage.show()
+  }
+
+  def createDropdownLine(name : String) : HBox = {
+    val comp = new HBox() {
+      spacing = 10
+      alignment = Pos.CenterRight
+    }
+    comp.getChildren().add(new Label(name))
+    comp.getChildren().add(createDropdownTree(""))
+
+    return comp
+  }
+
+  def createDropdownTree(title: String) : MenuButton = {
+    val rootItem = new TreeItem[String]("Root")
+    rootItem.setExpanded(true)
+    for (i<-1 to 25) {
+      val item = new TreeItem[String]("Message " + i)
+
+      rootItem.getChildren.add(item)
+    }
+    val tree = new TreeView[String](rootItem)
+    val customMenuItem = new CustomMenuItem(tree)
+    customMenuItem.setHideOnClick(false)
+    val button = new MenuButton(title) {
+      items = List(customMenuItem)
+    }
+    button.setMinWidth(140)
+    return button
+  }
 
   val box: HBox = new HBox {
     spacing = 15
