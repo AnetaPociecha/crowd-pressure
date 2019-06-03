@@ -1,7 +1,9 @@
 package config
 
 object Config {
- val cellSize: Int = 20
- val agentRadius: Double = 3
- val speed: Double = 2
+  val CellSize: Int = 14
+  val AgentRadius: Double = 3
+  val Speed: Double = 20
+  val Density: Int = 10
+  val Delay: Int  = 100
 }

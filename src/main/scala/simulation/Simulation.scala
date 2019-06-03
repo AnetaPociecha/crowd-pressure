@@ -9,7 +9,7 @@ import scalafx.scene.web.WebEngine
 import simulation.shortestpathalgoritm.{MapModel, NavigationField}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-import config.Config.agentRadius
+import config.Config.{AgentRadius, Delay, Density}
 
 case class Simulation(webEngine: WebEngine) {
 
@@ -62,6 +62,7 @@ case class Simulation(webEngine: WebEngine) {
   }
 
   def submitDestinations(): Unit = {
+    mapModel.destinations.clear()
     mapModel.destinations ++= tmpDestinations
     tmpDestinations.clear()
     println("sumbit destinations completed " + mapModel.destinations)
@@ -92,10 +93,12 @@ case class Simulation(webEngine: WebEngine) {
   }
 
   var timer: AnimationTimer = _
+  var isRunning: Boolean = false
+ // var initTimer: Boolean = true
 
   def perform(canvas: Canvas): Unit = {
 
-    if(timer == null) {
+//    if(initTimer || timer == null) {
       val gc: GraphicsContext = canvas.graphicsContext2D
 
       initAgent()
@@ -106,31 +109,47 @@ case class Simulation(webEngine: WebEngine) {
 
       timer = AnimationTimer { time =>
 
-        if(Random.nextInt(10) < 100) initAgent()
+        if(Random.nextInt(Density) < 100) initAgent()
 
         gc.clearRect(0,0,storedWidth,storedHeight)
 
         if(lastTime != 0) {
-          //        val interval = (time - lastTime) / 1e9
+          val interval = (time - lastTime) / 1e9
 
           agents.foreach(a => {
-            gc.fillOval(a.position.x.toInt, a.position.y.toInt, agentRadius*2, agentRadius*2)
-            a.step()
+            gc.fillOval(a.position.x.toInt, a.position.y.toInt, AgentRadius*2, AgentRadius*2)
+            a.step(interval)
           })
 
           agents = agents.filter(a => !a.destinationReached())
         }
         lastTime = time
-        Thread sleep 100
+        Thread sleep Delay
       }
       canvas.requestFocus()
-    }
+//      initTimer = false
+   // }
 
     timer.start()
+    isRunning = true
   }
 
   def stop(): Unit = {
-    if(timer != null) timer.stop()
+    if(timer != null) {
+      timer.stop()
+      isRunning = false
+    }
+  }
+
+  def clear(canvas: Canvas): Unit = {
+    timer.stop()
+    agents.clear()
+    if(canvas != null) {
+      val gc: GraphicsContext = canvas.graphicsContext2D
+      gc.clearRect(0,0,storedWidth,storedHeight)
+    }
+    navigationFields = ArrayBuffer()
+    isRunning = false
   }
 
 }

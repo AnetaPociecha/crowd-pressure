@@ -3,7 +3,6 @@ package graphics
 import java.util.StringTokenizer
 
 import scala.collection.mutable.ListBuffer
-import SVGBrowser.simulation
 
 class JSConnector {
 
@@ -14,14 +13,14 @@ class JSConnector {
     val x: Int = arr(1).toInt
     val y: Int = arr(2).toInt
 
-    simulation.addDestination(x,y)
+    SVGBrowser.simulation.addDestination(x,y)
 
     SVGBrowser.addJSConnectorToJSWindow()
   }
 
   def getArray(msg: String): List[String] = {
     val listBuffer = new ListBuffer[String]()
-    val tokenizer: StringTokenizer = new StringTokenizer(msg, "|");
+    val tokenizer: StringTokenizer = new StringTokenizer(msg, "|")
 
     while(tokenizer.hasMoreTokens()){
       listBuffer += tokenizer.nextToken()
@@ -32,6 +31,7 @@ class JSConnector {
   }
 
   def handleLayers(layers: String): Unit = {
+    SVGBrowser.addJSConnectorToJSWindow()
 
     val list = getArray(layers)
     println("==== WARSTWY ====")
@@ -39,5 +39,6 @@ class JSConnector {
     println("=================")
 
     SVGBrowser.onLoadAction()
+    SVGBrowser.addJSConnectorToJSWindow()
   }
 }

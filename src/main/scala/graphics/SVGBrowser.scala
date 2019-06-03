@@ -49,36 +49,46 @@ object SVGBrowser extends JFXApp {
   })
 
   var root: BorderPane = new BorderPane()
-  val stack: StackPane = new StackPane()
+  var stack: StackPane = new StackPane()
 
   stack.getChildren.add(webView)
   root.center = stack
 
   def onLoadAction(): Unit = {
+    addJSConnectorToJSWindow()
+
     simulation.adjustSize()
     simulation.initMapModel()
     addJSConnectorToJSWindow()
+    destinationsButton.disable = false
+    startButton.disable = true
+    stack.getChildren.remove(1)
+    simulation.clear(canvas)
+    addJSConnectorToJSWindow()
+
   }
 
   val destinationsButton = new Button()
   destinationsButton.setText("Submit Destinations")
+  destinationsButton.disable = true
+
   destinationsButton.setOnAction(() => {
-    simulation.submitDestinations()
-    simulation.initNavigationFields()
-    addJSConnectorToJSWindow()
+    if(!simulation.isRunning) {
+      simulation.submitDestinations()
+      simulation.initNavigationFields()
+      addJSConnectorToJSWindow()
+    }
+    startButton.disable = false
+    destinationsButton.disable = true
   })
 
   val startButton = new Button()
   startButton.setText("Start")
+  startButton.disable = true
   startButton.setOnAction(() => {
     start()
+    startButton.disable = true
   })
-
-//  val stopButton = new Button()
-//  stopButton.setText("Stop")
-//  stopButton.setOnAction(() => {
-//    simulation.stop()
-//  })
 
   uploadMapButton.setPrefWidth(120)
   uploadMapButton.setPrefHeight(25)
@@ -86,13 +96,11 @@ object SVGBrowser extends JFXApp {
   destinationsButton.setPrefHeight(25)
   startButton.setPrefWidth(120)
   startButton.setPrefHeight(25)
-//  stopButton.setPrefWidth(120)
-//  stopButton.setPrefHeight(25)
 
   val box: HBox = new HBox {
     spacing = 15
     padding = Insets(7, 25, 6, 25)
-    children = Seq(uploadMapButton, destinationsButton, startButton) // stopButton
+    children = Seq(uploadMapButton, destinationsButton, startButton)
   }
   root.bottom = box
 
@@ -141,10 +149,14 @@ object SVGBrowser extends JFXApp {
     window.setMember("app", new JSConnector())
   }
 
+  var canvas: Canvas = _
+
   def start(): Unit = {
-    val canvas: Canvas = new Canvas(simulation.storedWidth, simulation.storedHeight)
-    stack.getChildren.add(canvas)
-    simulation.perform(canvas)
+    if(!stack.children.contains(canvas)) {
+      canvas = new Canvas(simulation.storedWidth, simulation.storedHeight)
+      stack.getChildren.add(canvas)
+    }
+    if(!simulation.isRunning) simulation.perform(canvas)
   }
 
 }

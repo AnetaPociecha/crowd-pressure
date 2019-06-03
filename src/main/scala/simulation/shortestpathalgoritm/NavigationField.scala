@@ -4,7 +4,7 @@ import simulation.Vector2D
 import simulation.hexgrid.HexGrid
 
 import scala.collection.mutable
-import config.Config.cellSize
+import config.Config.CellSize
 
 case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
 
@@ -25,7 +25,7 @@ case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
   }
 
   def direction(x: Long, y: Long): Vector2D = {
-    val rowCol = HexGrid(cellSize).convertXYToRowCol(x,y)
+    val rowCol = HexGrid(CellSize).convertXYToRowCol(x,y)
     directions(rowCol.row, rowCol.col)
   }
 }
