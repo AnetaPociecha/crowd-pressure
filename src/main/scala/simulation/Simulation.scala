@@ -9,7 +9,10 @@ import scalafx.scene.web.WebEngine
 import simulation.shortestpathalgoritm.{MapModel, NavigationField}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Random
-import config.Config.{AgentRadius, Delay, Density}
+import config.Config.{AgentRadius, Delay, Density, TimeoutSec}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{Duration, SECONDS}
+import scala.concurrent.{Await, Future, blocking}
 
 case class Simulation(webEngine: WebEngine) {
 
@@ -68,13 +71,22 @@ case class Simulation(webEngine: WebEngine) {
     println("sumbit destinations completed " + mapModel.destinations)
   }
 
+
+
   def initNavigationFields(): Unit = {
     println("init navigation fields")
 
-    val navFields = mapModel.destinations.map(d => {
-      NavigationField(mapModel,d._1,d._2)
+    val navFields = mapModel.destinations.flatMap(d => {
+      mapModel.destinations.filter(dd => dd != d).map(dd => {
+        NavigationField(mapModel, dd._1, dd._2, d._1, d._2)
+      })
     })
-    navFields.foreach(nav => nav.init())
+
+    for(nav <- navFields) {
+      Await.ready(Future { blocking(nav.init().run())
+      }, Duration(TimeoutSec, SECONDS))
+    }
+
     navigationFields = navFields
 
     println("init navigation fields completed")
@@ -86,10 +98,9 @@ case class Simulation(webEngine: WebEngine) {
 
   private def initAgent(): Unit = {
 
-    val start: (Int, Int) = mapModel.destinations(Random.nextInt(mapModel.destinations.length))
     val nav: NavigationField = navigationFields(Random.nextInt(navigationFields.length))
-    if(start._1 != nav.x || start._2 != nav.y)
-      agents += new Agent(Vector2D(start._1,start._2),nav)
+
+    agents += new Agent(Vector2D(nav.xStart, nav.yStart), nav)
   }
 
   var timer: AnimationTimer = _

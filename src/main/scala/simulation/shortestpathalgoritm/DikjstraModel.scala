@@ -1,11 +1,12 @@
 package simulation.shortestpathalgoritm
 
 import simulation.hexgrid.Neighborhood
+import config.Config.PathWidthInCells
 
 import scala.collection.mutable
 
 
-case class DikjstraModel(mapModel: MapModel, x: Long, y: Long) {
+case class DikjstraModel(mapModel: MapModel, xStop: Long, yStop: Long, xStart: Long, yStart: Long) {
 
   val inf: Long = 1000
 
@@ -31,28 +32,44 @@ case class DikjstraModel(mapModel: MapModel, x: Long, y: Long) {
 
     println("Dijkstra graph")
 
-    val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
+    val rowCol = mapModel.hexGrid.convertXYToRowCol(xStop, yStop)
     @volatile var curNodes: mutable.MutableList[(Long, Long)] = mutable.MutableList((rowCol.row, rowCol.col))
     @volatile var nextNodes: mutable.MutableList[(Long, Long)] = mutable.MutableList()
     @volatile var cost = 0
 
-    while( visited.values.exists(_ == false) && curNodes.nonEmpty) {
+    while( visited.values.exists(_ == false) && curNodes.nonEmpty ) {
       println("process nodes: "+curNodes)
 
       for(node <- curNodes) {
-
-
-        visit(node, cost)
         nextNodes ++= neighbours(node._1, node._2)
-
       }
 
-      curNodes = nextNodes
+      var estiCostMap: mutable.TreeMap[(Long, Long), Double] = mutable.TreeMap()
+
+      nextNodes.foreach( node =>
+        estiCostMap += ( node -> estiCost(node) )
+      )
+
+      var seq = estiCostMap.toSeq.sortBy(_._2)
+      seq = seq.take(PathWidthInCells)
+
+      seq.foreach(s => visit(s._1, cost))
+
+
+      curNodes = mutable.MutableList()
+      seq.foreach(s => curNodes += s._1)
+
       nextNodes = mutable.MutableList()
+
       cost += 1
     }
 
     graph
+  }
+
+  private def estiCost(node: (Long, Long)): Double = {
+    val xy = mapModel.hexGrid.convertRowColToHexXY(node._1, node._2)
+    Math.sqrt(Math.pow(xy.x - xStart, 2) + Math.pow(xy.y - yStart, 2))
   }
 
   private def visit(node: (Long, Long), cost: Int): Unit = {

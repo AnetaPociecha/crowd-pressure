@@ -6,14 +6,14 @@ import simulation.hexgrid.HexGrid
 import scala.collection.mutable
 import config.Config.CellSize
 
-case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
+case class NavigationField(mapModel: MapModel, xStop: Long, yStop: Long, xStart: Long, yStart: Long) {
 
   private var directions: mutable.Map[(Long, Long), Vector2D] = mutable.Map()
 
-  def init(): Unit = {
+  def init(): Runnable = { () =>
     println("init navigation field")
 
-    val dijkstra = DikjstraModel(mapModel, x, y)
+    val dijkstra = DikjstraModel(mapModel, xStop, yStop, xStart, yStart)
     val dg = dijkstra.createGraph()
 
     val direction = DesiredDirectionModel(dg, mapModel)
@@ -24,8 +24,10 @@ case class NavigationField(mapModel: MapModel, x: Long, y: Long) {
     println("init navigation field completed")
   }
 
+  val hexGrid: HexGrid = HexGrid(CellSize)
+
   def direction(x: Long, y: Long): Vector2D = {
-    val rowCol = HexGrid(CellSize).convertXYToRowCol(x,y)
+    val rowCol = hexGrid.convertXYToRowCol(x,y)
     directions(rowCol.row, rowCol.col)
   }
 }

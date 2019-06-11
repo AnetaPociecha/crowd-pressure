@@ -39,11 +39,12 @@ object SVGBrowser extends JFXApp {
 
         val file: File = fileChooser.showOpenDialog(stage)
         if (file != null) {
+          openLayerChooser()
           val uri: String = file.toURI.toString
           webEngine.executeScript("clearMap()")
           webEngine.executeScript("setupMap(\""+uri+"\")")
           webEngine.executeScript("setOnLoadCallback(function() {  app.handleLayers(getLayers().join(\"|\")) })") // app.printLayers(layers())
-          openLayerChooser()
+
         }
       }
     }
@@ -191,8 +192,8 @@ object SVGBrowser extends JFXApp {
 
     println("set window size")
 
-    webView.setMinSize(width,height)
-    webView.setMaxSize(width,height)
+    webView.setMinSize(width,height + 10)
+    webView.setMaxSize(width,height + 10)
 
     root = new BorderPane()
     root.bottom = box
