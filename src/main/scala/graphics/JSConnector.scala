@@ -14,6 +14,8 @@ import scala.collection.mutable.ListBuffer
 
 class JSConnector {
 
+  var layers : List[String] = List[String]()
+
   def pushString(msg: String): Unit = {
     System.out.println("JS>> " + msg)
 
@@ -35,19 +37,31 @@ class JSConnector {
     }
 
     val list = listBuffer.toList
-    list
+    return list
   }
 
   def handleLayers(layers: String): Unit = {
     SVGBrowser.addJSConnectorToJSWindow()
 
     val list = getArray(layers)
+    this.layers = list
     println("==== WARSTWY ====")
     list.foreach(println)
     println("=================")
 
     SVGBrowser.onLoadAction()
     SVGBrowser.addJSConnectorToJSWindow()
+  }
+
+  def handleTargets(targets: String) : Unit = {
+    val list = getArray(targets)
+    var targetPosition = collection.mutable.Map[Int, Int]()
+
+    for(List(first, second) <- list.grouped(2)) {
+      targetPosition.put(first.toDouble.toInt,second.toDouble.toInt)
+    }
+
+    SVGBrowser.updateTargetPositions(targetPosition)
   }
 
 
@@ -62,10 +76,11 @@ class JSConnector {
     var mapData = mapper.readValue(layers, classOf[List[LayerNode]])
 
     for (i <- mapData.indices) {
-//      println(mapData(i).getName())
+      //      println(mapData(i).getName())
     }
 
     SVGBrowser.onLoadAction()
     SVGBrowser.addJSConnectorToJSWindow()
-    }
+
+  }
 }

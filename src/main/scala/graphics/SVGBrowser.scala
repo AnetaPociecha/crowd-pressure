@@ -25,6 +25,14 @@ object SVGBrowser extends JFXApp {
   val webEngine: WebEngine = webView.getEngine()
   var simulation: Simulation = Simulation(webEngine)
 
+  var obstacle : String = ""
+  var allowed : String = ""
+  var targets : String = ""
+
+  var targetPosition = collection.mutable.Map[Int,Int]()
+
+  val connector = new JSConnector()
+
   webEngine.load(getClass.getResource("map.html").toString)
 
   val uploadMapButton = new Button()
@@ -39,12 +47,11 @@ object SVGBrowser extends JFXApp {
 
         val file: File = fileChooser.showOpenDialog(stage)
         if (file != null) {
-          openLayerChooser()
+//          openLayerChooser()
           val uri: String = file.toURI.toString
           webEngine.executeScript("clearMap()")
           webEngine.executeScript("setupMap(\""+uri+"\")")
           webEngine.executeScript("setOnLoadCallback(function() {  app.handleLayers(getLayers().join(\"|\")) })") // app.printLayers(layers())
-
         }
       }
     }
@@ -57,6 +64,7 @@ object SVGBrowser extends JFXApp {
   root.center = stack
 
   def onLoadAction(): Unit = {
+    openLayerChooser()
     addJSConnectorToJSWindow()
 
     simulation.adjustSize()
@@ -68,7 +76,6 @@ object SVGBrowser extends JFXApp {
     stack.getChildren.remove(1)
     simulation.clear(canvas)
     addJSConnectorToJSWindow()
-
   }
 
   val destinationsButton = new Button()
@@ -113,9 +120,9 @@ object SVGBrowser extends JFXApp {
     newStage.initModality(Modality.WINDOW_MODAL)
     newStage.initOwner(rootScene.getWindow())
     newStage.setScene(stageScene)
-    comp.getChildren().add(createDropdownLine("Allowed space"))
-    comp.getChildren().add(createDropdownLine("Obstacles"))
-    comp.getChildren().add(createDropdownLine("Targets"))
+    comp.getChildren().add(createDropdownLine("Allowed space", updateAllowed))
+    comp.getChildren().add(createDropdownLine("Obstacles", updateObstacles))
+    comp.getChildren().add(createDropdownLine("Targets", updateTargets))
 
     val submitButton = new Button("Submit") {
       margin = Insets(20, 0, 0, 0)
@@ -124,38 +131,61 @@ object SVGBrowser extends JFXApp {
     submitButton.onAction = new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent) {
         newStage.close()
+        webEngine.executeScript("app.handleTargets(getTargets(\""+targets+"\").join(\"|\"))")
       }
     }
 
     comp.getChildren().add(submitButton)
     newStage.show()
   }
-
-  def createDropdownLine(name : String) : HBox = {
+  def createDropdownLine(name : String, onChange : (String) => Unit) : HBox = {
     val comp = new HBox() {
       spacing = 10
       alignment = Pos.CenterRight
     }
     comp.getChildren().add(new Label(name))
-    comp.getChildren().add(createDropdownTree(""))
+    comp.getChildren().add(createDropdownTree("", onChange))
 
     return comp
   }
 
-  def createDropdownTree(title: String) : MenuButton = {
-    val rootItem = new TreeItem[String]("Root")
-    rootItem.setExpanded(true)
-    for (i<-1 to 25) {
-      val item = new TreeItem[String]("Message " + i)
+  def updateAllowed(name : String) : Unit = {
+    this.allowed = name
+  }
 
-      rootItem.getChildren.add(item)
+  def updateObstacles(name : String) : Unit = {
+    this.obstacle = name
+  }
+
+  def updateTargets(name : String) : Unit = {
+    this.targets = name
+  }
+
+  def updateTargetPositions(targets : collection.mutable.Map[Int,Int]) : Unit = {
+    this.targetPosition = targets
+    for ((x,y) <- this.targetPosition) {
+      simulation.addDestination(x,y)
+//            println("x: "+ x + " y: " + y)
     }
-    val tree = new TreeView[String](rootItem)
-    val customMenuItem = new CustomMenuItem(tree)
-    customMenuItem.setHideOnClick(false)
-    val button = new MenuButton(title) {
-      items = List(customMenuItem)
+  }
+
+  def createDropdownTree(title: String, onChange : (String) => Unit) : MenuButton = {
+
+    val menuItem = new MenuItem("hello")
+    val content = new collection.mutable.MutableList[MenuItem]()
+
+    val button = new MenuButton(title)
+
+    for (layer <- connector.layers) {
+      val item = new MenuItem(layer)
+      item.setOnAction(() => {
+        button.text = layer
+        onChange(layer)
+      })
+      content += item
     }
+
+    button.items = content
     button.setMinWidth(140)
     return button
   }
@@ -209,7 +239,7 @@ object SVGBrowser extends JFXApp {
 
   def addJSConnectorToJSWindow(): Unit = {
     val window: JSObject = webEngine.executeScript("window").asInstanceOf[JSObject]
-    window.setMember("app", new JSConnector())
+    window.setMember("app", connector)
   }
 
   var canvas: Canvas = _

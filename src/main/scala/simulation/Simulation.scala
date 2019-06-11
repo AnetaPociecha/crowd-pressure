@@ -110,6 +110,9 @@ case class Simulation(webEngine: WebEngine) {
   def perform(canvas: Canvas): Unit = {
 
 //    if(initTimer || timer == null) {
+      for ((x,y) <- tmpDestinations) {
+        println("x: " + x + " y: " + y)
+      }
       val gc: GraphicsContext = canvas.graphicsContext2D
 
       initAgent()

@@ -22,11 +22,11 @@ function onLoad() {
 }
 
 function onClick(event) {
-     map = document.getElementById("map");
-     objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
-     console.log(objectName)
-     app.pushString([objectName,event.clientX,event.clientY].join(" "))
- }
+    map = document.getElementById("map");
+    objectName = map.contentDocument.elementFromPoint(event.clientX,event.clientY).parentNode.id
+    console.log(objectName)
+    app.pushString([objectName,event.clientX,event.clientY].join(" "))
+}
 
 function setupListener() {
     map = document.getElementById("map");
@@ -93,16 +93,27 @@ function clearMap() {
 }
 
 function readLayer(x,y) {
-     map = document.getElementById("map");
-     element = map.contentDocument.elementFromPoint(x,y)
-     objectName = element && element.parentNode.id
-     if(objectName == null)
+    map = document.getElementById("map");
+    element = map.contentDocument.elementFromPoint(x,y)
+    objectName = element && element.parentNode.id
+    if(objectName == null)
         return "Null"
-     else
+    else
         return objectName
 }
 
 function readMap(x,y) {
     map = document.getElementById("map")
     return map
+}
+
+function getTargets(targetName) {
+    targets = document.getElementById("map").contentDocument.getElementById(targetName).children
+    results = []
+    for (var i=0; i<targets.length; i++){
+        results.push(targets[i].cx.baseVal.value)
+        results.push(targets[i].cy.baseVal.value)
+    }
+
+    return results
 }
