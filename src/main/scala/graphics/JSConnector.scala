@@ -54,12 +54,21 @@ class JSConnector {
   }
 
   def handleTargets(targets: String) : Unit = {
+    println(targets)
     val list = getArray(targets)
-    var targetPosition = collection.mutable.Map[Int, Int]()
+//    var targetPosition = collection.mutable.Map[Int, Int]()
+    var targetPosition = List[(Int,Int)]()
 
     for(List(first, second) <- list.grouped(2)) {
-      targetPosition.put(first.toDouble.toInt,second.toDouble.toInt)
+      println(first.toFloat.toInt + " :: " + second.toFloat.toInt)
+      targetPosition = targetPosition:+((first.toFloat.toInt,second.toFloat.toInt))
+//      targetPosition.put(first.toDouble.toInt,second.toDouble.toInt)
     }
+
+    for ((x,y) <- targetPosition) {
+      println(x + " == " + y)
+    }
+//    println("count: "+ targetPosition.)
 
     SVGBrowser.updateTargetPositions(targetPosition)
   }

@@ -59,8 +59,10 @@ case class Simulation(webEngine: WebEngine) {
 
   def addDestination(x: Int, y: Int): Unit = {
     val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
-    if(!mapModel.isObstacle(rowCol.row, rowCol.col))
+//    if(!mapModel.isObstacle(rowCol.row, rowCol.col)) {
       tmpDestinations += ((x,y))
+//    }
+
     println("destinations: " + tmpDestinations)
   }
 

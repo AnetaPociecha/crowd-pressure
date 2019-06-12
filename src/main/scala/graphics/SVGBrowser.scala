@@ -29,7 +29,8 @@ object SVGBrowser extends JFXApp {
   var allowed : String = ""
   var targets : String = ""
 
-  var targetPosition = collection.mutable.Map[Int,Int]()
+//  var targetPosition = collection.mutable.Map[Int,Int]()
+  var targetPosition = List[(Int,Int)]()
 
   val connector = new JSConnector()
 
@@ -161,7 +162,8 @@ object SVGBrowser extends JFXApp {
     this.targets = name
   }
 
-  def updateTargetPositions(targets : collection.mutable.Map[Int,Int]) : Unit = {
+//  def updateTargetPositions(targets : collection.mutable.Map[Int,Int]) : Unit = {
+  def updateTargetPositions(targets : List[(Int,Int)]) : Unit = {
     this.targetPosition = targets
     for ((x,y) <- this.targetPosition) {
       simulation.addDestination(x,y)
