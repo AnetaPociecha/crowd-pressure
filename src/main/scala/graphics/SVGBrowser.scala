@@ -30,7 +30,7 @@ object SVGBrowser extends JFXApp {
   var targets : String = ""
 
 //  var targetPosition = collection.mutable.Map[Int,Int]()
-  var targetPosition = List[(Int,Int)]()
+  var targetPosition: List[(Int,Int)] = List[(Int,Int)]()
 
   val connector = new JSConnector()
 

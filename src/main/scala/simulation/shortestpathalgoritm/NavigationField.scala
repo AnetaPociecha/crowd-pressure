@@ -11,17 +11,13 @@ case class NavigationField(mapModel: MapModel, xStop: Long, yStop: Long, xStart:
   private var directions: mutable.Map[(Long, Long), Vector2D] = mutable.Map()
 
   def init(): Runnable = { () =>
-    println("init navigation field")
 
     val dijkstra = DikjstraModel(mapModel, xStop, yStop, xStart, yStart)
     val dg = dijkstra.createGraph()
 
     val direction = DesiredDirectionModel(dg, mapModel)
     val graph: mutable.Map[(Long, Long), Vector2D] = direction.createGraph()
-    println(graph)
     directions = graph
-
-    println("init navigation field completed")
   }
 
   val hexGrid: HexGrid = HexGrid(CellSize)

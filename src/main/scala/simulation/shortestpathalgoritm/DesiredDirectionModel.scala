@@ -11,7 +11,6 @@ case class DesiredDirectionModel(dijkstraGraph: mutable.Map[(Long, Long), Long],
   val neighbourhood: Neighborhood = Neighborhood()
 
   def createGraph(): mutable.Map[(Long, Long), Vector2D] = {
-    println("desired direction graph")
     dijkstraGraph.foreach(node => {
       graph += (node._1 -> direction(node._1._1, node._1._2))
     })

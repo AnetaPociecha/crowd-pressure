@@ -25,58 +25,40 @@ case class Simulation(webEngine: WebEngine) {
   var storedHeight: Int = _
 
   def adjustSize(): Unit = {
-    println("adjust size")
 
     val jsMap: HTMLObjectElement = webEngine.executeScript("readMap()").asInstanceOf[HTMLObjectElement]
     val viewBoxAttr: String = jsMap.getContentDocument.getElementsByTagName("svg").item(0).getAttributes.getNamedItem("viewBox").getNodeValue
     val sizes: Array[String] = viewBoxAttr.split(" ")
 
-    println("view Box: " + viewBoxAttr)
-
     val width: Int = sizes(2).toDouble.toInt + 1
     val height: Int = sizes(3).toDouble.toInt + 1
-
-    println(s"map size: $width $height")
 
     SVGBrowser.setSize(width, height)
 
     storedWidth = width
     storedHeight = height
-
-    println("adjust size completed")
   }
 
   def initMapModel(): Unit = {
-    println("init map")
 
     val map: simulation.Map = simulation.Map(webEngine, storedWidth, storedHeight)
 
     mapModel = MapModel(map)
     mapModel.initGraph()
-
-    println("init map completed")
   }
 
   def addDestination(x: Int, y: Int): Unit = {
-    val rowCol = mapModel.hexGrid.convertXYToRowCol(x,y)
-//    if(!mapModel.isObstacle(rowCol.row, rowCol.col)) {
-      tmpDestinations += ((x,y))
-//    }
-
-    println("destinations: " + tmpDestinations)
+    tmpDestinations += ((x,y))
   }
 
   def submitDestinations(): Unit = {
     mapModel.destinations.clear()
     mapModel.destinations ++= tmpDestinations
     tmpDestinations.clear()
-    println("sumbit destinations completed " + mapModel.destinations)
   }
 
 
-
   def initNavigationFields(): Unit = {
-    println("init navigation fields")
 
     val navFields = mapModel.destinations.flatMap(d => {
       mapModel.destinations.filter(dd => dd != d).map(dd => {
@@ -90,8 +72,6 @@ case class Simulation(webEngine: WebEngine) {
     }
 
     navigationFields = navFields
-
-    println("init navigation fields completed")
   }
 
   /* ***************************************************************************** */
@@ -107,14 +87,9 @@ case class Simulation(webEngine: WebEngine) {
 
   var timer: AnimationTimer = _
   var isRunning: Boolean = false
- // var initTimer: Boolean = true
 
   def perform(canvas: Canvas): Unit = {
 
-//    if(initTimer || timer == null) {
-      for ((x,y) <- tmpDestinations) {
-        println("x: " + x + " y: " + y)
-      }
       val gc: GraphicsContext = canvas.graphicsContext2D
 
       initAgent()
@@ -143,19 +118,11 @@ case class Simulation(webEngine: WebEngine) {
         Thread sleep Delay
       }
       canvas.requestFocus()
-//      initTimer = false
-   // }
 
     timer.start()
     isRunning = true
   }
 
-  def stop(): Unit = {
-    if(timer != null) {
-      timer.stop()
-      isRunning = false
-    }
-  }
 
   def clear(canvas: Canvas): Unit = {
     timer.stop()

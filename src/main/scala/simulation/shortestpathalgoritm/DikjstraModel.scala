@@ -30,15 +30,12 @@ case class DikjstraModel(mapModel: MapModel, xStop: Long, yStop: Long, xStart: L
 
   def createGraph(): mutable.Map[(Long, Long), Long] = {
 
-    println("Dijkstra graph")
-
     val rowCol = mapModel.hexGrid.convertXYToRowCol(xStop, yStop)
     @volatile var curNodes: mutable.MutableList[(Long, Long)] = mutable.MutableList((rowCol.row, rowCol.col))
     @volatile var nextNodes: mutable.MutableList[(Long, Long)] = mutable.MutableList()
     @volatile var cost = 0
 
     while( visited.values.exists(_ == false) && curNodes.nonEmpty ) {
-      println("process nodes: "+curNodes)
 
       for(node <- curNodes) {
         nextNodes ++= neighbours(node._1, node._2)

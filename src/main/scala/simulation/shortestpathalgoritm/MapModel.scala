@@ -14,7 +14,6 @@ case class MapModel(map: simulation.Map, margin: Int = 0, cellSize: Int = CellSi
   val hexGrid: HexGrid = HexGrid(cellSize)
 
   def initGraph(): Unit = {
-    println("init map model")
     val g: mutable.Map[(Long, Long), Boolean] =  mutable.Map()
     val startingRowCol = hexGrid.convertXYToRowCol(-margin, -margin)
     var row: Long = startingRowCol.row
@@ -29,7 +28,6 @@ case class MapModel(map: simulation.Map, margin: Int = 0, cellSize: Int = CellSi
       row +=1
     }
     graph = g
-    println("map model: "+graph)
 
   }
 
@@ -45,7 +43,6 @@ case class MapModel(map: simulation.Map, margin: Int = 0, cellSize: Int = CellSi
 
   def isObstacle(row: Long, col: Long): Boolean = {
     val xy = hexGrid.convertRowColToHexXY(row, col)
-//    val shift = cellSize / 3
     val shift = cellSize / 4 + ObstacleMargin
     (
       map.isObstacle(xy.x.toInt, xy.y.toInt)
